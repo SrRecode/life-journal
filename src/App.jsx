@@ -156,7 +156,7 @@ function Shell() {
   };
 
   return (
-    <div className="mx-auto min-h-dvh max-w-md">
+    <div className="relative min-h-dvh">
       {pages[tab]}
 
       <BottomNav tab={tab} onTab={setTab} onNew={() => openEditor()} />
@@ -186,7 +186,7 @@ function Shell() {
       {locked && settings.appLock && <LockScreen />}
 
       {toast && (
-        <div className="anim-toast fixed bottom-[100px] left-1/2 z-[60] max-w-[86vw] -translate-x-1/2 rounded-full bg-navy px-4 py-2 text-[13.5px] font-medium text-navy-ink shadow-lg">
+        <div className="anim-toast fixed right-[max(16px,calc((100%-28rem)/2+16px))] top-[max(env(safe-area-inset-top),14px)] z-[60] max-w-[min(86vw,340px)] rounded-full bg-navy px-4 py-2 text-[13.5px] font-medium text-navy-ink shadow-lg">
           {toast.message}
         </div>
       )}
@@ -197,7 +197,9 @@ function Shell() {
 export default function App() {
   return (
     <SettingsProvider>
-      <Shell />
+      <div className="app-frame relative mx-auto min-h-dvh w-full max-w-md bg-bg sm:shadow-[0_0_60px_rgba(29,28,25,0.10)] sm:ring-1 sm:ring-line">
+        <Shell />
+      </div>
     </SettingsProvider>
   );
 }

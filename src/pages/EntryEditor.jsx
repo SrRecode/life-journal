@@ -103,7 +103,7 @@ export function EntryEditor({ entry, date, onClose, onSaved }) {
 
   return (
     <Sheet>
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-bg px-4 pb-3 pt-[max(env(safe-area-inset-top),16px)]">
+      <div className="sticky top-0 z-10 mx-auto flex max-w-md items-center justify-between border-b border-line bg-bg px-4 pb-3 pt-[max(env(safe-area-inset-top),16px)]">
         <button type="button" onClick={onClose} className="text-[15px] text-soft">
           Cancel
         </button>
@@ -118,7 +118,7 @@ export function EntryEditor({ entry, date, onClose, onSaved }) {
         </button>
       </div>
 
-      <div className="mx-auto max-w-[560px] px-4 pb-28 pt-5">
+      <div className="mx-auto max-w-md px-4 pb-28 pt-5">
         <div className="flex items-center gap-1.5 text-[13.5px] text-soft">
           <span className="font-medium text-ink">{longDate(entryDate)}</span>
           <span>·</span>

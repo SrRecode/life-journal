@@ -41,7 +41,7 @@ export function Welcome() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center px-8 text-center">
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center px-8 text-center">
       <div className="relative mb-8 h-44 w-48" aria-hidden>
         <span className="absolute left-1/2 top-0 h-4 w-28 -translate-x-1/2 rounded-t-sm bg-accent/70" />
         <span className="absolute left-2 top-7 h-32 w-36 rotate-[-5deg] rounded-md bg-card shadow-[0_3px_16px_rgba(20,20,20,0.12)] ring-1 ring-line" />

@@ -78,7 +78,7 @@ export function SettingsPage({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-40 overflow-y-auto bg-bg pb-16 anim-sheet">
+    <div className="fixed inset-0 z-40 mx-auto max-w-md overflow-y-auto bg-bg pb-16 anim-sheet">
       <header className="flex items-center gap-1 border-b border-line px-2 pb-3 pt-[max(env(safe-area-inset-top),14px)]">
         <button
           type="button"
@@ -190,7 +190,7 @@ export function SettingsPage({ onClose }) {
       </div>
 
       {pinSetup && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-bg px-6">
+        <div className="fixed inset-0 z-50 mx-auto flex max-w-md flex-col items-center justify-center bg-bg px-6">
           <button
             type="button"
             onClick={() => setPinSetup(null)}

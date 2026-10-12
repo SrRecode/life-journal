@@ -45,7 +45,7 @@ export function Toggle({ checked, onChange, disabled = false, label }) {
 
 export function Sheet({ children, onClose, className = '' }) {
   return (
-    <div className={`fixed inset-0 z-40 overflow-y-auto bg-bg ${className} anim-sheet`}>
+    <div className={`fixed inset-0 z-40 mx-auto max-w-md overflow-y-auto bg-bg ${className} anim-sheet`}>
       {children}
     </div>
   );

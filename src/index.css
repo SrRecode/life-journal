@@ -96,6 +96,15 @@
   }
 }
 
+@media (min-width: 640px) {
+  body {
+    background: #ecebe6;
+  }
+  [data-theme="dark"] body {
+    background: #060a12;
+  }
+}
+
 @layer components {
   .paper {
     background-image: repeating-linear-gradient(
@@ -139,11 +148,11 @@
 
 @keyframes toast-in {
   from {
-    transform: translate(-50%, 8px);
+    transform: translateY(-8px);
     opacity: 0;
   }
   to {
-    transform: translate(-50%, 0);
+    transform: translateY(0);
     opacity: 1;
   }
 }

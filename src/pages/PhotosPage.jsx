@@ -35,7 +35,7 @@ export function PhotosPage({ onOpenEntry }) {
           {photos.length} {photos.length === 1 ? 'photo' : 'photos'} on this phone
         </p>
 
-        <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
           {TABS.map((t) => (
             <button
               key={t}

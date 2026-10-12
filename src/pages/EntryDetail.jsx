@@ -54,7 +54,7 @@ export function EntryDetail({ entryId, onClose, onEdit }) {
 
   return (
     <Sheet className="anim-sheet">
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-bg px-3 pb-2.5 pt-[max(env(safe-area-inset-top),14px)]">
+      <div className="sticky top-0 z-10 mx-auto flex max-w-md items-center justify-between border-b border-line bg-bg px-3 pb-2.5 pt-[max(env(safe-area-inset-top),14px)]">
         <button
           type="button"
           onClick={onClose}
@@ -93,7 +93,7 @@ export function EntryDetail({ entryId, onClose, onEdit }) {
         </div>
       </div>
 
-      <article className="mx-auto max-w-[560px] px-4 pb-32 pt-6">
+      <article className="mx-auto max-w-md px-4 pb-32 pt-6">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[13px] text-soft">{fmtDayMeta(entry.date, entry.time)}</span>
           <MoodBadge mood={entry.mood} />
