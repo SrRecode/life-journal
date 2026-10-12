@@ -2,7 +2,9 @@
 
 A private, offline-first photo journal and diary you can install on your phone or desktop. Your entries never leave your device — everything is stored locally, and you can take a full encrypted backup whenever you want.
 
-**Live demo:** https://srrecode.github.io/life-journal/
+**Live:**
+- Vercel: https://life-journal-ten-tawny.vercel.app
+- GitHub Pages: https://srrecode.github.io/life-journal/ (after Pages is enabled in repo settings)
 
 ## Features
 
@@ -79,11 +81,8 @@ src/
 
 ## Deploy
 
-The site is published with **GitHub Pages** on every push to `main` (see `.github/workflows/deploy-pages.yml`). The workflow runs `npm run build -- --base=/life-journal/` and uploads `dist/` as a Pages artifact.
-
-To deploy elsewhere:
-
-- **Vercel** — import the repo; it auto-detects Vite. No extra config needed (base stays `/`).
+- **Vercel** — the repo is connected to the Vercel project `life-journal`; every push to `main` auto-deploys. Vite is auto-detected, no extra config needed (base stays `/`).
+- **GitHub Pages** — `.github/workflows/deploy-pages.yml` builds with `--base=/life-journal/` and publishes `dist/` via `actions/deploy-pages` on every push to `main`. Requires Pages enabled with source **GitHub Actions** (Settings → Pages).
 - **Netlify** — build command `npm run build`, publish directory `dist`.
 
 ## License
