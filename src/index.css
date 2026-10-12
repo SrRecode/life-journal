@@ -1,3 +1,149 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@import "@fontsource/hanken-grotesk/400.css";
+@import "@fontsource/hanken-grotesk/500.css";
+@import "@fontsource/hanken-grotesk/600.css";
+@import "@fontsource/hanken-grotesk/700.css";
+@import "@fontsource/newsreader/400.css";
+@import "@fontsource/newsreader/500.css";
+@import "@fontsource/newsreader/600.css";
+@import "@fontsource/newsreader/400-italic.css";
+@import "@fontsource/newsreader/600-italic.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --bg: #fbfaf7;
+  --card: #ffffff;
+  --ink: #1d1c19;
+  --ink-soft: #75716a;
+  --line: #e7e4db;
+  --rule: #f1efe8;
+  --accent: #f3cf23;
+  --accent-ink: #1d1c19;
+  --accent-soft: #fbe98a;
+  --navy: #182340;
+  --navy-ink: #fcfbf8;
+  --field: #f4f2ec;
+  --danger: #c4553f;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #0c1322;
+  --card: #131c30;
+  --ink: #f2f1ec;
+  --ink-soft: #98a1b6;
+  --line: #24304d;
+  --rule: #1b2740;
+  --accent: #f3cf23;
+  --accent-ink: #1d1c19;
+  --accent-soft: #6b5a14;
+  --navy: #f3cf23;
+  --navy-ink: #182340;
+  --field: #0f1829;
+  --danger: #e08a76;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, serif;
+
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-navy: var(--navy);
+  --color-navy-ink: var(--navy-ink);
+  --color-field: var(--field);
+  --color-danger: var(--danger);
+
+  --color-mood-calm: #6f9fd8;
+  --color-mood-happy: #f3cf23;
+  --color-mood-proud: #e5894a;
+  --color-mood-tired: #a89ad4;
+  --color-mood-low: #d4685a;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+  button {
+    cursor: pointer;
+  }
+  input,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+  ::placeholder {
+    color: var(--ink-soft);
+    opacity: 0.75;
+  }
+}
+
+@layer components {
+  .paper {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 27px,
+      var(--rule) 27px 28px
+    );
+    background-position: 0 14px;
+  }
+  .highlight {
+    background-image: linear-gradient(
+      to top,
+      var(--accent-soft) 0.38em,
+      transparent 0.38em
+    );
+    padding-inline: 0.06em;
+  }
+  .card-shell {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .anim-sheet {
+    animation: sheet-in 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  .anim-toast {
+    animation: toast-in 0.18s ease-out;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(14px);
+    opacity: 0.5;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    transform: translate(-50%, 8px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}

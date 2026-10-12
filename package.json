@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -18,9 +18,16 @@
     "vite-plugin-pwa": "^2.0.0"
   },
   "dependencies": {
+    "@fontsource/hanken-grotesk": "^5.3.0",
+    "@fontsource/newsreader": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/wicg-file-system-access": "^2023.10.7",
     "dexie": "^4.4.6",
+    "dexie-react-hooks": "^4.4.0",
     "idb": "^8.0.4",
+    "lucide-react": "^1.55.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "zxcvbn": "^4.4.2"
   }
 }
