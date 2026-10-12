@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Check } from 'lucide-react';
 import { useSettings, useToast } from '../services/settings';
 import { readBackupFile, unlockBackup, restoreBackup } from '../services/backup';
+import { GuidePage } from './GuidePage';
 
 const BULLETS = ['No account and no login', 'Works without internet', 'Backed up to a file you control'];
 
@@ -11,6 +12,7 @@ export function Welcome() {
   const fileRef = useRef(null);
   const [pending, setPending] = useState(null);
   const [pw, setPw] = useState('');
+  const [showGuide, setShowGuide] = useState(false);
 
   const onFile = async (e) => {
     const file = e.target.files?.[0];
@@ -78,8 +80,17 @@ export function Welcome() {
       >
         Restore from a backup file
       </button>
+      <button
+        type="button"
+        onClick={() => setShowGuide(true)}
+        className="mt-3 text-[14px] text-soft underline underline-offset-4"
+      >
+        How to use this app
+      </button>
 
       <input ref={fileRef} type="file" accept=".json,.ljournal,application/json" hidden onChange={onFile} />
+
+      {showGuide && <GuidePage onClose={() => setShowGuide(false)} />}
 
       {pending && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-8">

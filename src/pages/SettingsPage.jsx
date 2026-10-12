@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Check, ChevronLeft, Fingerprint, Lock, Moon, Sun, Smartphone } from 'lucide-react';
+import { Check, ChevronLeft, Fingerprint, Lock, Moon, Sun, Smartphone, Trash2 } from 'lucide-react';
 import { useToast, useSettings } from '../services/settings';
 import { hasPlatformAuthenticator, registerFingerprint } from '../services/webauthn';
 import { PinPad } from '../components/PinPad';
-import { OfflineNote, SectionTitle, SettingRow, Toggle } from '../components/ui';
+import { Confirm, OfflineNote, SectionTitle, SettingRow, Toggle } from '../components/ui';
+import { GuidePage } from './GuidePage';
 
 const APPEARANCES = [
   { id: 'light', label: 'Light', Icon: Sun },
@@ -26,6 +27,8 @@ export function SettingsPage({ onClose }) {
   const [pinError, setPinError] = useState(false);
   const [authOk, setAuthOk] = useState(true);
   const [lockPicker, setLockPicker] = useState(false);
+  const [confirmRemovePin, setConfirmRemovePin] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
     hasPlatformAuthenticator().then(setAuthOk);
@@ -51,6 +54,15 @@ export function SettingsPage({ onClose }) {
       }, 500);
       showToast('PINs did not match');
     }
+  };
+
+  const removePin = async () => {
+    await set('pinHash', null);
+    await set('appLock', false);
+    await set('fingerprint', false);
+    await set('webauthnId', null);
+    setConfirmRemovePin(false);
+    showToast('Saved PIN removed');
   };
 
   const toggleLock = async (v) => {
@@ -115,7 +127,10 @@ export function SettingsPage({ onClose }) {
 
         <SectionTitle>Privacy</SectionTitle>
         <div className="overflow-hidden rounded-2xl border border-line bg-card">
-          <SettingRow title="App lock" sub={settings.pinHash ? 'PIN set' : 'Choose a 4-digit PIN to turn this on'}>
+          <SettingRow
+            title="App lock"
+            sub={settings.pinHash ? 'Saved PIN on this phone' : 'Choose a 4-digit PIN to turn this on'}
+          >
             <Toggle checked={settings.appLock} onChange={toggleLock} label="App lock" />
           </SettingRow>
           {settings.appLock && (
@@ -141,6 +156,11 @@ export function SettingsPage({ onClose }) {
           {settings.pinHash && (
             <SettingRow title="Change PIN" sub="Replace your current unlock PIN" onClick={startPinSetup}>
               <ChevronLeft size={16} className="rotate-180 text-soft" />
+            </SettingRow>
+          )}
+          {settings.pinHash && (
+            <SettingRow title="Remove saved PIN" sub="Turn off app lock and delete the PIN" onClick={() => setConfirmRemovePin(true)}>
+              <Trash2 size={15} className="text-soft" />
             </SettingRow>
           )}
         </div>
@@ -180,6 +200,13 @@ export function SettingsPage({ onClose }) {
           </SettingRow>
         </div>
 
+        <SectionTitle>Help</SectionTitle>
+        <div className="overflow-hidden rounded-2xl border border-line bg-card">
+          <SettingRow title="Guide" sub="How to use Life Journal, step by step" onClick={() => setShowGuide(true)}>
+            <ChevronLeft size={16} className="rotate-180 text-soft" />
+          </SettingRow>
+        </div>
+
         <OfflineNote>
           Life Journal works offline. Your journal never leaves this phone unless you export it.
         </OfflineNote>
@@ -188,6 +215,17 @@ export function SettingsPage({ onClose }) {
           Life Journal · v1.0.0 · Saved on this phone
         </p>
       </div>
+
+      {showGuide && <GuidePage onClose={() => setShowGuide(false)} />}
+
+      <Confirm
+        open={confirmRemovePin}
+        title="Remove saved PIN?"
+        body="App lock and fingerprint unlock will be turned off. You can set up a new PIN anytime by turning App lock on again."
+        confirmLabel="Remove"
+        onConfirm={removePin}
+        onCancel={() => setConfirmRemovePin(false)}
+      />
 
       {pinSetup && (
         <div className="fixed inset-0 z-50 mx-auto flex max-w-md flex-col items-center justify-center bg-bg px-6">
