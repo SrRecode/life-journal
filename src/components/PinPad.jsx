@@ -50,7 +50,7 @@ export function PinPad({
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
   const keyClass = dark
     ? 'bg-white/10 text-white hover:bg-white/15 active:bg-white/20'
-    : 'bg-card/80 text-ink hover:bg-card active:bg-field';
+    : 'bg-card/80 text-ink hover:bg-field active:bg-line';
 
   return (
     <div className="mx-auto w-[264px]">
@@ -88,7 +88,11 @@ export function PinPad({
         </button>
         <button
           type="button"
-          onClick={() => setPin((p) => p.slice(0, -1))}
+          onClick={() => {
+            const next = pin.slice(0, -1);
+            setPin(next);
+            onChange?.(next.length);
+          }}
           aria-label="Delete"
           className={`flex h-16 items-center justify-center rounded-2xl transition-colors ${
             dark ? 'text-white hover:bg-white/10' : 'text-ink hover:bg-card/80'

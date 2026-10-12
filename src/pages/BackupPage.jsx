@@ -5,6 +5,7 @@ import { db } from '../database/db';
 import { useSettings, useToast } from '../services/settings';
 import { exportBackup, downloadBlob, readBackupFile, unlockBackup, restoreBackup, backupSize } from '../services/backup';
 import { OfflineNote, SettingRow, Toggle } from '../components/ui';
+import { TopBarActions } from '../components/TopBar';
 
 function relTime(ts) {
   if (!ts) return 'never';
@@ -14,7 +15,7 @@ function relTime(ts) {
   return `${days} days ago`;
 }
 
-export function BackupPage() {
+export function BackupPage({ onSettings }) {
   const { settings, set } = useSettings();
   const { showToast } = useToast();
   const fileRef = useRef(null);
@@ -94,8 +95,13 @@ export function BackupPage() {
   return (
     <div className="pb-32">
       <header className="px-4 pt-[max(env(safe-area-inset-top),16px)]">
-        <h1 className="font-serif text-[34px] font-semibold leading-none">Backup</h1>
-        <p className="mt-1.5 text-[13px] text-soft">Saved only on this phone</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="font-serif text-[34px] font-semibold leading-none">Backup</h1>
+            <p className="mt-1.5 text-[13px] text-soft">Saved only on this phone</p>
+          </div>
+          <TopBarActions showSearch={false} onSettings={onSettings} />
+        </div>
       </header>
 
       <section className="mx-4 mt-5 card-shell paper px-4 py-4">

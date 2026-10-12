@@ -150,9 +150,15 @@ function Shell() {
         onSettings={() => setShowSettings(true)}
       />
     ),
-    calendar: <CalendarPage onOpenEntry={setDetailId} onNew={(date) => openEditor({ date })} />,
-    photos: <PhotosPage onOpenEntry={setDetailId} />,
-    backup: <BackupPage />,
+    calendar: (
+      <CalendarPage
+        onOpenEntry={setDetailId}
+        onNew={(date) => openEditor({ date })}
+        onSettings={() => setShowSettings(true)}
+      />
+    ),
+    photos: <PhotosPage onOpenEntry={setDetailId} onSettings={() => setShowSettings(true)} />,
+    backup: <BackupPage onSettings={() => setShowSettings(true)} />,
   };
 
   return (

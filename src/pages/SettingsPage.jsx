@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, ChevronLeft, Fingerprint, Lock, Moon, Sun, Smartphone, Trash2 } from 'lucide-react';
 import { useToast, useSettings } from '../services/settings';
 import { hasPlatformAuthenticator, registerFingerprint } from '../services/webauthn';
-import { PinPad } from '../components/PinPad';
+import { PinDots, PinPad } from '../components/PinPad';
 import { Confirm, OfflineNote, SectionTitle, SettingRow, Toggle } from '../components/ui';
 import { GuidePage } from './GuidePage';
 
@@ -25,6 +25,7 @@ export function SettingsPage({ onClose }) {
   const { showToast } = useToast();
   const [pinSetup, setPinSetup] = useState(null); // { step: 'create'|'confirm', first: null }
   const [pinError, setPinError] = useState(false);
+  const [pinFilled, setPinFilled] = useState(0);
   const [authOk, setAuthOk] = useState(true);
   const [lockPicker, setLockPicker] = useState(false);
   const [confirmRemovePin, setConfirmRemovePin] = useState(false);
@@ -33,6 +34,10 @@ export function SettingsPage({ onClose }) {
   useEffect(() => {
     hasPlatformAuthenticator().then(setAuthOk);
   }, []);
+
+  useEffect(() => {
+    setPinFilled(0);
+  }, [pinSetup?.step]);
 
   const startPinSetup = () => setPinSetup({ step: 'create', first: null });
 
@@ -232,7 +237,7 @@ export function SettingsPage({ onClose }) {
           <button
             type="button"
             onClick={() => setPinSetup(null)}
-            className="absolute right-4 top-[max(env(safe-area-inset-top),16px)] text-[15px] text-soft"
+            className="absolute right-4 top-[max(env(safe-area-inset-top),16px)] text-[15px] text-soft transition-colors hover:text-ink"
           >
             Cancel
           </button>
@@ -246,7 +251,10 @@ export function SettingsPage({ onClose }) {
             <p className="mt-1 text-[13.5px] text-soft">4 digits you will remember</p>
           </div>
           <div className="mb-7">
-            <PinPad onComplete={onPin} error={pinError} />
+            <PinDots length={4} filled={pinFilled} error={pinError} />
+          </div>
+          <div className="mb-7">
+            <PinPad onComplete={onPin} onChange={setPinFilled} error={pinError} />
           </div>
         </div>
       )}

@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Search, Settings as SettingsIcon, X } from 'lucide-react';
 import { db } from '../database/db';
 import { fmtHeaderDate, streakOf } from '../services/dates';
 import { EntryCard, EmptyJournal } from '../components/EntryCard';
+import { TopBarActions } from '../components/TopBar';
 
 export function TimelinePage({ onOpenEntry, onNew, onSettings }) {
   const [query, setQuery] = useState('');
@@ -48,27 +48,14 @@ export function TimelinePage({ onOpenEntry, onNew, onSettings }) {
               Your journal
             </h1>
           </div>
-          <div className="flex gap-2 pt-1">
-            <button
-              type="button"
-              aria-label="Search"
-              onClick={() => {
-                setSearching((s) => !s);
-                if (searching) setQuery('');
-              }}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink"
-            >
-              {searching ? <X size={18} /> : <Search size={18} />}
-            </button>
-            <button
-              type="button"
-              aria-label="Settings"
-              onClick={onSettings}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink"
-            >
-              <SettingsIcon size={18} />
-            </button>
-          </div>
+          <TopBarActions
+            searching={searching}
+            onSearchToggle={() => {
+              if (searching) setQuery('');
+              setSearching((s) => !s);
+            }}
+            onSettings={onSettings}
+          />
         </div>
         {searching ? (
           <input

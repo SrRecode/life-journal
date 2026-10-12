@@ -5,12 +5,15 @@ import { db, moodOf } from '../database/db';
 import { buildMonthGrid, iso, monthLabel, weekdayLabels } from '../services/dates';
 import { useSettings } from '../services/settings';
 import { EntryCard } from '../components/EntryCard';
+import { TopBarActions } from '../components/TopBar';
 
-export function CalendarPage({ onOpenEntry, onNew }) {
+export function CalendarPage({ onOpenEntry, onNew, onSettings }) {
   const { settings } = useSettings();
   const now = new Date();
   const [cursor, setCursor] = useState({ y: now.getFullYear(), m: now.getMonth() });
   const [selected, setSelected] = useState(iso(now));
+  const [searching, setSearching] = useState(false);
+  const [query, setQuery] = useState('');
 
   const entries = useLiveQuery(() => db.entries.toArray(), []) || [];
   const photos = useLiveQuery(() => db.photos.toArray(), []) || [];
@@ -30,6 +33,19 @@ export function CalendarPage({ onOpenEntry, onNew }) {
     return map;
   }, [photos]);
 
+  const searchResults = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return entries
+      .filter(
+        (e) =>
+          (e.title || '').toLowerCase().includes(q) ||
+          (e.body || '').toLowerCase().includes(q) ||
+          (e.tags || []).some((t) => t.toLowerCase().includes(q))
+      )
+      .sort((a, b) => (b.date === a.date ? b.createdAt - a.createdAt : b.date < a.date ? -1 : 1));
+  }, [entries, query]);
+
   const weeks = buildMonthGrid(cursor.y, cursor.m, settings.weekStartsOn);
   const today = iso(now);
   const dayEntries = byDate[selected] || [];
@@ -44,102 +60,157 @@ export function CalendarPage({ onOpenEntry, onNew }) {
   return (
     <div className="pb-32">
       <header className="px-4 pt-[max(env(safe-area-inset-top),16px)]">
-        <div className="flex items-center justify-between">
-          <span className="text-[13px] font-medium text-soft">{cursor.y}</span>
-          <div className="flex items-center gap-3">
-            <button type="button" aria-label="Previous month" onClick={() => move(-1)} className="text-soft">
-              <ChevronLeft size={20} />
-            </button>
-            <h1 className="font-serif text-[26px] font-semibold">{monthLabel(cursor.y, cursor.m)}</h1>
-            <button type="button" aria-label="Next month" onClick={() => move(1)} className="text-soft">
-              <ChevronRight size={20} />
-            </button>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[13px] font-medium text-soft">{cursor.y}</p>
+            <div className="mt-0.5 flex items-center gap-1">
+              <button
+                type="button"
+                aria-label="Previous month"
+                onClick={() => move(-1)}
+                className="text-soft transition-colors hover:text-ink"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <h1 className="font-serif text-[26px] font-semibold">{monthLabel(cursor.y, cursor.m)}</h1>
+              <button
+                type="button"
+                aria-label="Next month"
+                onClick={() => move(1)}
+                className="text-soft transition-colors hover:text-ink"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
           </div>
-          <span className="w-5" />
+          <TopBarActions
+            searching={searching}
+            onSearchToggle={() => {
+              if (searching) setQuery('');
+              setSearching((s) => !s);
+            }}
+            onSettings={onSettings}
+          />
         </div>
 
-        <div className="mt-4 grid grid-cols-7">
-          {weekdayLabels(settings.weekStartsOn).map((d) => (
-            <div key={d} className="pb-1 text-center text-[11px] font-semibold text-soft">
-              {d[0]}
+        {searching ? (
+          <input
+            autoFocus
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search your journal…"
+            className="mt-3 w-full rounded-xl border border-line bg-field px-4 py-2.5 text-[15px] outline-none focus:border-ink/30"
+          />
+        ) : (
+          <>
+            <div className="mt-4 grid grid-cols-7">
+              {weekdayLabels(settings.weekStartsOn).map((d) => (
+                <div key={d} className="pb-1 text-center text-[11px] font-semibold text-soft">
+                  {d[0]}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="mt-1 grid grid-cols-7 gap-y-1">
-          {weeks.flat().map((d, i) => {
-            const key = iso(d);
-            const inMonth = d.getMonth() === cursor.m;
-            const dayEntries2 = byDate[key] || [];
-            const isSel = key === selected;
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setSelected(key)}
-                className="relative mx-auto flex h-11 w-11 flex-col items-center justify-center rounded-full"
-              >
-                <span
-                  className={`absolute inset-0 rounded-full ${
-                    isSel ? 'ring-2 ring-accent' : ''
-                  } ${key === today && !isSel ? 'border border-ink/25' : ''}`}
-                />
-                <span
-                  className={`relative text-[14px] ${
-                    inMonth ? 'text-ink' : 'text-soft/40'
-                  } ${key === today ? 'font-bold' : ''}`}
-                >
-                  {d.getDate()}
-                </span>
-                <span className="relative mt-[3px] flex h-[5px] gap-[3px]">
-                  {dayEntries2.slice(0, 3).map((e) => (
+            <div className="mt-1 grid grid-cols-7 gap-y-1">
+              {weeks.flat().map((d, i) => {
+                const key = iso(d);
+                const inMonth = d.getMonth() === cursor.m;
+                const dayEntries2 = byDate[key] || [];
+                const isSel = key === selected;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setSelected(key)}
+                    className="relative mx-auto flex h-11 w-11 flex-col items-center justify-center rounded-full"
+                  >
                     <span
-                      key={e.id}
-                      className="h-[5px] w-[5px] rounded-full"
-                      style={{ backgroundColor: moodOf(e.mood)?.color || 'var(--ink-soft)' }}
+                      className={`absolute inset-0 rounded-full ${
+                        isSel ? 'ring-2 ring-accent' : ''
+                      } ${key === today && !isSel ? 'border border-ink/25' : ''}`}
                     />
-                  ))}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                    <span
+                      className={`relative text-[14px] ${
+                        inMonth ? 'text-ink' : 'text-soft/40'
+                      } ${key === today ? 'font-bold' : ''}`}
+                    >
+                      {d.getDate()}
+                    </span>
+                    <span className="relative mt-[3px] flex h-[5px] gap-[3px]">
+                      {dayEntries2.slice(0, 3).map((e) => (
+                        <span
+                          key={e.id}
+                          className="h-[5px] w-[5px] rounded-full"
+                          style={{ backgroundColor: moodOf(e.mood)?.color || 'var(--ink-soft)' }}
+                        />
+                      ))}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
       </header>
 
-      <section className="mt-6 px-4">
-        <h2 className="mb-3 font-serif text-[19px] font-semibold italic">
-          <span className="highlight">
-            {new Date(selected + 'T00:00:00').toLocaleDateString(undefined, {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-            })}
-          </span>
-        </h2>
-        {dayEntries.length > 0 ? (
-          <div className="space-y-4">
-            {dayEntries.map((e) => (
-              <EntryCard
-                key={e.id}
-                entry={e}
-                photos={photosByEntry[e.id] || []}
-                onOpen={onOpenEntry}
-                compact
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="card-shell px-4 py-8 text-center">
-            <p className="text-[14px] text-soft">Nothing written on this day.</p>
-            <button
-              type="button"
-              onClick={() => onNew(selected)}
-              className="mt-4 rounded-xl bg-navy px-6 py-2.5 text-[14px] font-semibold text-navy-ink"
-            >
-              Write about this day
-            </button>
-          </div>
-        )}
-      </section>
+      {searching ? (
+        <section className="mt-6 px-4">
+          {query.trim() === '' ? (
+            <p className="py-10 text-center text-[14px] text-soft">
+              Type to search titles, writing and tags.
+            </p>
+          ) : searchResults.length === 0 ? (
+            <p className="py-10 text-center text-[14px] text-soft">Nothing matches “{query}”.</p>
+          ) : (
+            <div className="space-y-4">
+              {searchResults.map((e) => (
+                <EntryCard
+                  key={e.id}
+                  entry={e}
+                  photos={photosByEntry[e.id] || []}
+                  onOpen={onOpenEntry}
+                  compact
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      ) : (
+        <section className="mt-6 px-4">
+          <h2 className="mb-3 font-serif text-[19px] font-semibold italic">
+            <span className="highlight">
+              {new Date(selected + 'T00:00:00').toLocaleDateString(undefined, {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+              })}
+            </span>
+          </h2>
+          {dayEntries.length > 0 ? (
+            <div className="space-y-4">
+              {dayEntries.map((e) => (
+                <EntryCard
+                  key={e.id}
+                  entry={e}
+                  photos={photosByEntry[e.id] || []}
+                  onOpen={onOpenEntry}
+                  compact
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="card-shell px-4 py-8 text-center">
+              <p className="text-[14px] text-soft">Nothing written on this day.</p>
+              <button
+                type="button"
+                onClick={() => onNew(selected)}
+                className="mt-4 rounded-xl bg-navy px-6 py-2.5 text-[14px] font-semibold text-navy-ink"
+              >
+                Write about this day
+              </button>
+            </div>
+          )}
+        </section>
+      )}
     </div>
   );
 }
